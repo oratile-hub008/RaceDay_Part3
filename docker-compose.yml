@@ -1,0 +1,48 @@
+# Runs the whole RaceDay system with one command:  docker compose up --build
+#   web  -> http://localhost:8080   (MVC application)
+#   api  -> http://localhost:5100   (API + Swagger)
+#   db   -> SQL Server
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${SA_PASSWORD:-RaceDay_Str0ng_Pass1}"
+    volumes:
+      - sqldata:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q \"SELECT 1\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 20s
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=db;Database=RaceDayDb;User Id=sa;Password=${SA_PASSWORD:-RaceDay_Str0ng_Pass1};TrustServerCertificate=True;"
+      SeedDemoData: "true"
+      AzureBlob__ConnectionString: "${AZURE_STORAGE_CONNECTION_STRING:-}"
+      AzureBlob__ContainerName: "${AZURE_BLOB_CONTAINER:-raceday-images}"
+    ports:
+      - "5100:8080"
+    restart: on-failure
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - api
+    environment:
+      ApiSettings__BaseUrl: "http://api:8080/"
+    ports:
+      - "8080:8080"
+
+volumes:
+  sqldata:

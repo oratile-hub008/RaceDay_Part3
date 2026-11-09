@@ -1,0 +1,62 @@
+@* View: MyEvents/Index - used by the MyEvents controller. *@
+@model List<EnrolmentInfo>
+@{
+    ViewData["Title"] = "My events";
+}
+<section class="page-hero">
+    <div class="container">
+        <h1>My events</h1>
+        <p>Every event you have entered and its enrolment status</p>
+    </div>
+</section>
+
+<div class="container py-4">
+    @if (Model.Count == 0)
+    {
+        <div class="empty-state">
+            <i class="bi bi-ticket-perforated"></i>
+            <h4>You haven't entered any events yet</h4>
+            <p class="text-muted">Find an event you like and enter in a few clicks.</p>
+            <a asp-controller="Events" asp-action="Index" class="btn btn-primary">Find events</a>
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table rd-table align-middle mb-0">
+                    <thead>
+                        <tr><th>Event</th><th>Date</th><th>Category</th><th>Entered on</th><th>Status</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var enrolment in Model)
+                        {
+                            var isPast = enrolment.EventDate < DateTime.UtcNow;
+                            <tr>
+                                <td><a asp-controller="Events" asp-action="Details" asp-route-id="@enrolment.EventId" class="fw-semibold">@enrolment.EventName</a></td>
+                                <td>
+                                    @UiHelper.DateAndTime(enrolment.EventDate)
+                                    @if (isPast)
+                                    {
+                                        <span class="badge text-bg-secondary ms-1">Completed</span>
+                                    }
+                                </td>
+                                <td>@enrolment.CategoryName</td>
+                                <td>@UiHelper.Date(enrolment.EnrolledAt)</td>
+                                <td><partial name="_StatusBadge" model="enrolment.Status" /></td>
+                                <td class="text-end">
+                                    @if (!isPast)
+                                    {
+                                        <form asp-action="Withdraw" asp-route-id="@enrolment.Id" method="post" data-confirm="Withdraw from @enrolment.EventName?">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Withdraw</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

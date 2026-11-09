@@ -1,0 +1,13 @@
+@* View: Home/StatusPage - used by the Home controller. *@
+@{
+    ViewData["Title"] = "Page not found";
+    var code = ViewData["Code"] as int? ?? 404;
+}
+<div class="container py-5 text-center">
+    <div class="empty-state">
+        <i class="bi bi-flag"></i>
+        <h2>@(code == 404 ? "We couldn't find that page" : "That page isn't available")</h2>
+        <p class="text-muted">The page you were looking for may have moved or no longer exists.</p>
+        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to home</a>
+    </div>
+</div>

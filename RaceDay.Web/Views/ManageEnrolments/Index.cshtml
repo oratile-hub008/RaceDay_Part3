@@ -1,0 +1,63 @@
+@* View: ManageEnrolments/Index - used by the ManageEnrolments controller. *@
+@model EnrolmentsViewModel
+@{
+    ViewData["Title"] = "Enrolments";
+}
+<section class="page-hero">
+    <div class="container">
+        <h1>Enrolments</h1>
+        <p>@Model.Event.Name &middot; @UiHelper.Date(Model.Event.EventDate)</p>
+    </div>
+</section>
+
+<div class="container py-4">
+    <a asp-controller="ManageEvents" asp-action="Index" class="back-link"><i class="bi bi-arrow-left"></i> Back to events</a>
+
+    @if (Model.Enrolments.Count == 0)
+    {
+        <div class="empty-state mt-3">
+            <i class="bi bi-people"></i>
+            <h4>No enrolments yet</h4>
+            <p class="text-muted">Participants who enter this event will appear here.</p>
+        </div>
+    }
+    else
+    {
+        <div class="card mt-3">
+            <div class="table-responsive">
+                <table class="table rd-table align-middle mb-0">
+                    <thead>
+                        <tr><th>Participant</th><th>Category</th><th>Entered on</th><th>Status</th><th class="text-end">Action</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var enrolment in Model.Enrolments)
+                        {
+                            <tr>
+                                <td class="fw-semibold">@enrolment.ParticipantName</td>
+                                <td>@enrolment.CategoryName</td>
+                                <td>@UiHelper.Date(enrolment.EnrolledAt)</td>
+                                <td><partial name="_StatusBadge" model="enrolment.Status" /></td>
+                                <td class="text-end">
+                                    @if (enrolment.Status == "Pending")
+                                    {
+                                        <form asp-action="SetStatus" asp-route-eventId="@Model.Event.Id" asp-route-id="@enrolment.Id" method="post">
+                                            <input type="hidden" name="status" value="Confirmed" />
+                                            <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-check-lg"></i> Confirm</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="SetStatus" asp-route-eventId="@Model.Event.Id" asp-route-id="@enrolment.Id" method="post">
+                                            <input type="hidden" name="status" value="Pending" />
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary">Mark pending</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

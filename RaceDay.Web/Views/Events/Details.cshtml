@@ -1,0 +1,94 @@
+@* View: Events/Details - used by the Events controller. *@
+@model EventDetailsViewModel
+@{
+    ViewData["Title"] = Model.Event.Name;
+    var role = Context.Session.GetString(SessionKeys.Role);
+    ViewData["Size"] = "hero";
+}
+<div class="container py-4">
+    <a asp-action="Index" class="back-link"><i class="bi bi-arrow-left"></i> All events</a>
+
+    <div class="row g-4 mt-1">
+        <div class="col-lg-8">
+            <partial name="_EventBanner" model="Model.Event" view-data="ViewData" />
+
+            <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+                <span class="type-chip type-@Model.Event.EventType.ToLower()"><i class="bi @UiHelper.TypeIcon(Model.Event.EventType)"></i> @Model.Event.EventType</span>
+                <span class="text-muted">@UiHelper.DaysUntil(Model.Event.EventDate)</span>
+            </div>
+            <h1 class="event-title">@Model.Event.Name</h1>
+
+            <div class="info-grid">
+                <div><i class="bi bi-calendar3"></i><span>Date</span><strong>@UiHelper.DateAndTime(Model.Event.EventDate)</strong></div>
+                <div><i class="bi bi-geo-alt-fill"></i><span>Location</span><strong>@Model.Event.Location</strong></div>
+                <div><i class="bi bi-signpost-split-fill"></i><span>Distance</span><strong>@UiHelper.Distance(Model.Event.DistanceKm)</strong></div>
+                <div><i class="bi bi-person-badge"></i><span>Organiser</span><strong>@Model.Event.OrganiserName</strong></div>
+            </div>
+
+            <h4 class="mt-4">About this event</h4>
+            <p class="event-description">@(string.IsNullOrWhiteSpace(Model.Event.Description) ? "The organiser has not added a description yet." : Model.Event.Description)</p>
+
+            <h4 class="mt-4">Categories</h4>
+            @if (Model.Categories.Count == 0)
+            {
+                <p class="text-muted">No categories have been added yet.</p>
+            }
+            else
+            {
+                <div class="list-group">
+                    @foreach (var category in Model.Categories)
+                    {
+                        <div class="list-group-item">
+                            <strong>@category.Name</strong>
+                            @if (!string.IsNullOrWhiteSpace(category.Description))
+                            {
+                                <div class="text-muted small">@category.Description</div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card enrol-card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-ticket-perforated"></i> Enter this event</h5>
+
+                    @if (role != Roles.Participant)
+                    {
+                        <p class="text-muted mb-0">Only participants can enter events. Organisers manage events from their dashboard.</p>
+                    }
+                    else if (Model.MyEnrolment != null)
+                    {
+                        <p class="mb-2">You are entered in <strong>@Model.MyEnrolment.CategoryName</strong>.</p>
+                        <partial name="_StatusBadge" model="Model.MyEnrolment.Status" />
+                        <a asp-controller="MyEvents" asp-action="Index" class="btn btn-outline-primary w-100 mt-3">View my events</a>
+                    }
+                    else if (Model.IsPast)
+                    {
+                        <p class="text-muted mb-0">This event has already taken place, so entries are closed.</p>
+                    }
+                    else if (Model.Categories.Count == 0)
+                    {
+                        <p class="text-muted mb-0">Entries open once the organiser adds categories.</p>
+                    }
+                    else
+                    {
+                        <form asp-action="Enrol" asp-route-id="@Model.Event.Id" method="post">
+                            <p class="text-muted">Choose your category:</p>
+                            @foreach (var category in Model.Categories)
+                            {
+                                <div class="category-option">
+                                    <input type="radio" class="btn-check" name="categoryId" id="cat-@category.Id" value="@category.Id" required />
+                                    <label class="category-label" for="cat-@category.Id">@category.Name</label>
+                                </div>
+                            }
+                            <button type="submit" class="btn btn-primary w-100 mt-3"><i class="bi bi-lightning-charge-fill"></i> Enter event</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

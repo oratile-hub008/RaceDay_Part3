@@ -1,0 +1,69 @@
+@* View: ManageCategories/Index - used by the ManageCategories controller. *@
+@model CategoriesViewModel
+@{
+    ViewData["Title"] = "Categories";
+}
+<section class="page-hero">
+    <div class="container">
+        <h1>Categories</h1>
+        <p>@Model.Event.Name &middot; @UiHelper.Date(Model.Event.EventDate)</p>
+    </div>
+</section>
+
+<div class="container py-4">
+    <a asp-controller="ManageEvents" asp-action="Index" class="back-link"><i class="bi bi-arrow-left"></i> Back to events</a>
+
+    <div class="row g-4 mt-1">
+        <div class="col-lg-7">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Event categories</h5>
+                    @if (Model.Categories.Count == 0)
+                    {
+                        <p class="text-muted mb-0">No categories yet. Add an age or distance category, for example "10 km Open" or "Under 20".</p>
+                    }
+                    else
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var category in Model.Categories)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <div>
+                                        <strong>@category.Name</strong>
+                                        @if (!string.IsNullOrWhiteSpace(category.Description))
+                                        {
+                                            <div class="text-muted small">@category.Description</div>
+                                        }
+                                    </div>
+                                    <form asp-action="Delete" asp-route-eventId="@Model.Event.Id" asp-route-id="@category.Id" method="post" data-confirm="Delete the @category.Name category?">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Add a category</h5>
+                    <form asp-action="Add" asp-route-eventId="@Model.Event.Id" method="post" novalidate>
+                        <div asp-validation-summary="All" class="alert alert-danger"></div>
+                        <div class="mb-3">
+                            <label for="Name" class="form-label">Category name</label>
+                            <input id="Name" name="Name" value="@Model.Form.Name" class="form-control" maxlength="100" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="Description" class="form-label">Description (optional)</label>
+                            <input id="Description" name="Description" value="@Model.Form.Description" class="form-control" maxlength="500" />
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus-lg"></i> Add category</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,18 @@
+@* View: Shared - used by many pages. *@
+@model EventInfo
+@{
+    var size = ViewData["Size"] as string ?? "card";
+}
+@if (!string.IsNullOrEmpty(Model.BannerUrl))
+{
+    <div class="event-banner banner-@size">
+        <img src="@Model.BannerUrl" alt="Banner for @Model.Name" loading="lazy" />
+    </div>
+}
+else
+{
+    <div class="event-banner banner-@size banner-fallback type-@Model.EventType.ToLower()">
+        <i class="bi @UiHelper.TypeIcon(Model.EventType)"></i>
+        <span>@Model.EventType</span>
+    </div>
+}

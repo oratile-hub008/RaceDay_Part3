@@ -1,0 +1,104 @@
+@* View: Dashboard/Index - used by the Dashboard controller. *@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<section class="page-hero">
+    <div class="container d-flex flex-wrap justify-content-between align-items-end gap-3">
+        <div>
+            <h1>Organiser dashboard</h1>
+            <p>Welcome back, @Model.OrganiserName</p>
+        </div>
+        <a asp-controller="ManageEvents" asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Create event</a>
+    </div>
+</section>
+
+<div class="container py-4">
+    <div class="row g-3 mb-4">
+        <div class="col-md-4"><div class="stat-card"><i class="bi bi-calendar-event"></i><strong>@Model.Events.Count</strong><span>Events created</span></div></div>
+        <div class="col-md-4"><div class="stat-card"><i class="bi bi-people-fill"></i><strong>@Model.TotalEnrolments</strong><span>Total enrolments</span></div></div>
+        <div class="col-md-4"><div class="stat-card"><i class="bi bi-hourglass-split"></i><strong>@Model.TotalPending</strong><span>Waiting for confirmation</span></div></div>
+    </div>
+
+    @if (Model.Events.Count == 0)
+    {
+        <div class="empty-state">
+            <i class="bi bi-calendar-plus"></i>
+            <h4>You haven't created any events yet</h4>
+            <p class="text-muted">Create your first event and participants can start entering.</p>
+            <a asp-controller="ManageEvents" asp-action="Create" class="btn btn-primary">Create an event</a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-alarm"></i> Upcoming dates</h5>
+                        @if (Model.Upcoming.Count == 0)
+                        {
+                            <p class="text-muted mb-0">No upcoming events.</p>
+                        }
+                        else
+                        {
+                            <ul class="list-unstyled upcoming-list mb-0">
+                                @foreach (var item in Model.Upcoming)
+                                {
+                                    <li>
+                                        <div class="date-box">
+                                            <strong>@item.Event.EventDate.ToString("dd")</strong>
+                                            <span>@item.Event.EventDate.ToString("MMM").ToUpper()</span>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">@item.Event.Name</div>
+                                            <small class="text-muted">@UiHelper.DaysUntil(item.Event.EventDate) &middot; @item.Total enrolled</small>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body pb-0">
+                        <h5 class="card-title"><i class="bi bi-flag-fill"></i> Your events</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table rd-table align-middle mb-0">
+                            <thead>
+                                <tr><th>Event</th><th>Date</th><th class="text-center">Enrolments</th><th></th></tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Events)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="fw-semibold">@item.Event.Name</div>
+                                            <small class="text-muted">@item.Event.Location</small>
+                                        </td>
+                                        <td>@UiHelper.Date(item.Event.EventDate)</td>
+                                        <td class="text-center">
+                                            <strong>@item.Total</strong>
+                                            <div class="small">
+                                                <span class="text-success">@item.Confirmed confirmed</span> &middot;
+                                                <span class="text-warning-emphasis">@item.Pending pending</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-end text-nowrap">
+                                            <a class="btn btn-sm btn-outline-primary" asp-controller="ManageEnrolments" asp-action="Index" asp-route-eventId="@item.Event.Id">Enrolments</a>
+                                            <a class="btn btn-sm btn-outline-secondary" asp-controller="ManageResults" asp-action="Index" asp-route-eventId="@item.Event.Id">Results</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

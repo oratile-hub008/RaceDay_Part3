@@ -1,0 +1,52 @@
+@* View: Home/Index - used by the Home controller. *@
+@{
+    ViewData["Title"] = "Welcome";
+}
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <span class="hero-kicker">South Africa's event platform</span>
+                <h1>Race day starts<br />here.</h1>
+                <p class="lead">Find runs, walks and cycle events near you, enter in seconds and keep every finish time in one place. Organisers manage events, entries and results with ease.</p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a class="btn btn-primary btn-lg" asp-controller="Account" asp-action="Register"><i class="bi bi-lightning-charge-fill"></i> Join RaceDay</a>
+                    <a class="btn btn-outline-light btn-lg" asp-controller="Account" asp-action="Login">Log in</a>
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="hero-badges">
+                    <div class="hero-badge type-run"><i class="bi bi-lightning-charge-fill"></i><span>Run</span></div>
+                    <div class="hero-badge type-walk"><i class="bi bi-person-walking"></i><span>Walk</span></div>
+                    <div class="hero-badge type-cycle"><i class="bi bi-bicycle"></i><span>Cycle</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container py-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <i class="bi bi-search"></i>
+                <h5>Find your event</h5>
+                <p>Browse upcoming events and filter by type, distance or location.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <i class="bi bi-ticket-perforated"></i>
+                <h5>Enter in seconds</h5>
+                <p>Pick a category, enter the event and follow your enrolment status.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <i class="bi bi-trophy"></i>
+                <h5>Track your results</h5>
+                <p>See your finish times and positions from every race in one place.</p>
+            </div>
+        </div>
+    </div>
+</section>

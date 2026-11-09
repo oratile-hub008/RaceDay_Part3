@@ -1,0 +1,69 @@
+@* View: Account/Register - used by the Account controller. *@
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Join RaceDay";
+}
+<div class="container auth-wrap">
+    <div class="auth-card auth-card-wide">
+        <h2><i class="bi bi-lightning-charge-fill"></i> Join RaceDay</h2>
+        <p class="text-muted">Create your free account in a minute.</p>
+
+        <form asp-action="Register" method="post" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <div class="mb-3">
+                <label class="form-label d-block">I want to...</label>
+                <div class="role-picker">
+                    <input type="radio" class="btn-check" name="Role" id="role-participant" value="Participant" checked="@(Model.Role != "Organiser")" />
+                    <label class="role-option" for="role-participant"><i class="bi bi-person-walking"></i><strong>Take part</strong><small>Enter events and track results</small></label>
+
+                    <input type="radio" class="btn-check" name="Role" id="role-organiser" value="Organiser" checked="@(Model.Role == "Organiser")" />
+                    <label class="role-option" for="role-organiser"><i class="bi bi-clipboard-data"></i><strong>Organise</strong><small>Create events and capture results</small></label>
+                </div>
+                <span asp-validation-for="Role" class="text-danger small"></span>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="FirstName" class="form-label"></label>
+                    <input asp-for="FirstName" class="form-control" autocomplete="given-name" />
+                    <span asp-validation-for="FirstName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="LastName" class="form-label"></label>
+                    <input asp-for="LastName" class="form-control" autocomplete="family-name" />
+                    <span asp-validation-for="LastName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Email" class="form-label">Email address</label>
+                    <input asp-for="Email" class="form-control" autocomplete="email" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="PhoneNumber" class="form-label"></label>
+                    <input asp-for="PhoneNumber" class="form-control" autocomplete="tel" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" class="form-control" autocomplete="new-password" />
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ConfirmPassword" class="form-label"></label>
+                    <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                </div>
+                <div class="col-12" id="organiser-code-group">
+                    <label asp-for="OrganiserCode" class="form-label"></label>
+                    <input asp-for="OrganiserCode" class="form-control" />
+                    <span asp-validation-for="OrganiserCode" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-4">Create my account</button>
+        </form>
+
+        <p class="text-center mt-3 mb-0">Already have an account? <a asp-action="Login">Log in</a></p>
+    </div>
+</div>

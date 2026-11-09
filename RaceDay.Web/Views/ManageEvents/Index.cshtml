@@ -1,0 +1,73 @@
+@* View: ManageEvents/Index - used by the ManageEvents controller. *@
+@model List<EventInfo>
+@{
+    ViewData["Title"] = "Manage events";
+}
+<section class="page-hero">
+    <div class="container d-flex flex-wrap justify-content-between align-items-end gap-3">
+        <div>
+            <h1>Manage events</h1>
+            <p>Create, edit and delete your events</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Create event</a>
+    </div>
+</section>
+
+<div class="container py-4">
+    @if (Model.Count == 0)
+    {
+        <div class="empty-state">
+            <i class="bi bi-calendar-plus"></i>
+            <h4>No events yet</h4>
+            <p class="text-muted">Create your first event to start receiving entries.</p>
+            <a asp-action="Create" class="btn btn-primary">Create an event</a>
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table rd-table align-middle mb-0">
+                    <thead>
+                        <tr><th>Event</th><th>Type</th><th>Date</th><th>Distance</th><th class="text-end">Manage</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ev in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        @if (!string.IsNullOrEmpty(ev.BannerUrl))
+                                        {
+                                            <img src="@ev.BannerUrl" class="thumb" alt="Banner for @ev.Name" />
+                                        }
+                                        else
+                                        {
+                                            <span class="thumb thumb-fallback type-@ev.EventType.ToLower()"><i class="bi @UiHelper.TypeIcon(ev.EventType)"></i></span>
+                                        }
+                                        <div>
+                                            <div class="fw-semibold">@ev.Name</div>
+                                            <small class="text-muted">@ev.Location</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="type-chip type-@ev.EventType.ToLower()">@ev.EventType</span></td>
+                                <td>@UiHelper.DateAndTime(ev.EventDate)</td>
+                                <td>@UiHelper.Distance(ev.DistanceKm)</td>
+                                <td class="text-end text-nowrap">
+                                    <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@ev.Id"><i class="bi bi-pencil"></i> Edit</a>
+                                    <a class="btn btn-sm btn-outline-secondary" asp-controller="ManageCategories" asp-action="Index" asp-route-eventId="@ev.Id"><i class="bi bi-tags"></i> Categories</a>
+                                    <a class="btn btn-sm btn-outline-secondary" asp-controller="ManageEnrolments" asp-action="Index" asp-route-eventId="@ev.Id"><i class="bi bi-people"></i> Enrolments</a>
+                                    <a class="btn btn-sm btn-outline-secondary" asp-controller="ManageResults" asp-action="Index" asp-route-eventId="@ev.Id"><i class="bi bi-stopwatch"></i> Results</a>
+                                    <form asp-action="Delete" asp-route-id="@ev.Id" method="post" class="d-inline" data-confirm="Delete @ev.Name? This also removes its categories, enrolments and results.">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

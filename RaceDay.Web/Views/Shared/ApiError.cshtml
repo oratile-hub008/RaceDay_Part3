@@ -1,0 +1,14 @@
+@* View: Shared - used by many pages. *@
+@model string
+@{
+    ViewData["Title"] = "Something went wrong";
+}
+<div class="container py-5 text-center">
+    <div class="empty-state">
+        <i class="bi bi-cloud-slash"></i>
+        <h2>We couldn't load that page</h2>
+        <p class="text-muted">@Model</p>
+        <a class="btn btn-primary" href="javascript:location.reload()"><i class="bi bi-arrow-clockwise"></i> Try again</a>
+        <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">Back to home</a>
+    </div>
+</div>

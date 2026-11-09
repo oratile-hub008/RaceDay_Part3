@@ -1,0 +1,61 @@
+@* View: MyResults/Index - used by the MyResults controller. *@
+@model List<ResultInfo>
+@{
+    ViewData["Title"] = "My results";
+    var best = Model.Count == 0 ? 0 : Model.Min(r => r.Position);
+    var podiums = Model.Count(r => r.Position <= 3);
+}
+<section class="page-hero">
+    <div class="container">
+        <h1>My results</h1>
+        <p>Your race history, finish times and positions</p>
+    </div>
+</section>
+
+<div class="container py-4">
+    @if (Model.Count == 0)
+    {
+        <div class="empty-state">
+            <i class="bi bi-trophy"></i>
+            <h4>No results yet</h4>
+            <p class="text-muted">Your results appear here once an organiser has captured them after an event.</p>
+            <a asp-controller="MyEvents" asp-action="Index" class="btn btn-primary">View my events</a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3 mb-4">
+            <div class="col-md-4"><div class="stat-card"><i class="bi bi-flag-fill"></i><strong>@Model.Count</strong><span>Races completed</span></div></div>
+            <div class="col-md-4"><div class="stat-card"><i class="bi bi-award-fill"></i><strong>@best</strong><span>Best position</span></div></div>
+            <div class="col-md-4"><div class="stat-card"><i class="bi bi-trophy-fill"></i><strong>@podiums</strong><span>Podium finishes</span></div></div>
+        </div>
+
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table rd-table align-middle mb-0">
+                    <thead>
+                        <tr><th>Event</th><th>Date</th><th>Category</th><th>Finish time</th><th>Position</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var result in Model)
+                        {
+                            <tr>
+                                <td><a asp-controller="Events" asp-action="Details" asp-route-id="@result.EventId" class="fw-semibold">@result.EventName</a></td>
+                                <td>@UiHelper.Date(result.EventDate)</td>
+                                <td>@result.CategoryName</td>
+                                <td class="finish-time">@result.FinishTime</td>
+                                <td>
+                                    <span class="position-pill @(result.Position <= 3 ? "podium" : "")">
+                                        @if (result.Position <= 3) { <i class="bi bi-trophy-fill"></i> }
+                                        @result.Position
+                                    </span>
+                                    <span class="text-muted">out of @result.TotalFinishers</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

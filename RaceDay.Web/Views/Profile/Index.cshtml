@@ -1,0 +1,73 @@
+@* View: Profile/Index - used by the Profile controller. *@
+@model ProfileViewModel
+@{
+    ViewData["Title"] = "My profile";
+    var fullName = $"{Model.FirstName} {Model.LastName}";
+}
+<section class="page-hero">
+    <div class="container">
+        <h1>My profile</h1>
+        <p>Keep your details up to date</p>
+    </div>
+</section>
+
+<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.PictureUrl))
+                    {
+                        <img src="@Model.PictureUrl" class="avatar avatar-xl mb-3" alt="Your profile picture" />
+                    }
+                    else
+                    {
+                        <span class="avatar avatar-xl avatar-initials mb-3">@UiHelper.Initials(fullName)</span>
+                    }
+                    <h5 class="mb-0">@fullName</h5>
+                    <span class="role-pill role-pill-dark">@Model.Role</span>
+
+                    <form asp-action="UploadPicture" method="post" enctype="multipart/form-data" class="mt-4 text-start" id="picture-form">
+                        <label class="form-label" for="picture">Profile picture</label>
+                        <input type="file" id="picture" name="picture" class="form-control" accept="image/png,image/jpeg,image/gif,image/webp" data-max-mb="5" required />
+                        <div class="form-text">JPG, PNG, GIF or WEBP, up to 5 MB.</div>
+                        <button type="submit" class="btn btn-outline-primary w-100 mt-3"><i class="bi bi-upload"></i> Upload picture</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Personal information</h5>
+                    <form asp-action="Update" method="post" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="FirstName" class="form-label"></label>
+                                <input asp-for="FirstName" class="form-control" />
+                                <span asp-validation-for="FirstName" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="LastName" class="form-label"></label>
+                                <input asp-for="LastName" class="form-control" />
+                                <span asp-validation-for="LastName" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="email-display">Email address</label>
+                                <input id="email-display" class="form-control" value="@Model.Email" disabled />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="PhoneNumber" class="form-label"></label>
+                                <input asp-for="PhoneNumber" class="form-control" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-4">Save changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,5 @@
+@* View: Shared - used by many pages. *@
+@model string
+<span class="status-badge status-@Model.ToLower()">
+    <i class="bi @(Model == "Confirmed" ? "bi-check-circle-fill" : "bi-hourglass-split")"></i> @Model
+</span>
